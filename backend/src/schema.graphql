@@ -1,0 +1,442 @@
+type Query {
+  userLogin(userAccount: String, userPassword: String): User
+  initUserNotification(userID: String): [NotificationTask]
+  initUserAchievement(userID: String): [userAchievement]
+  initUserTodo(_id: ID): Todo
+  initUserEvent(userID: String): [DashboardEvent]
+  initUserTeamEvent(userID: String): [Event]
+  initTeam(userID: String): [Team]
+
+  findTeamName(teamID: String): String
+  initMember(teamID: String): [User]
+  isManaging(userID: String, teamID: String): Boolean
+  initTeamEvent(teamID: String): [Event]
+  initTeamPost(teamID: String): [Post]
+  initVote(teamID: String): [Vote]
+  initVoteOption(voteID: String): [VoteOption]
+
+  myUserAccount(userID: String): User
+  userEventDetail(eventID: String): Event
+  teamEventDetail(eventID: String): Event
+  #teamEventReply(eventID: String, userID: String):  EventReply
+
+  teamPostDetail(postID: String): Post
+  teamVoteDetail(voteID: String): Vote
+  #teamVoteOption(voteOptionID: String): VoteOption
+
+  initContest(teamID: String): [Contest]
+  teamContestDetail(contestID: String): Contest
+  initSetDetail(contestID: String): [SetDetail]
+
+  users(query: String): [User]
+  teams(query: String): [Team]
+  user(usreID: String): User
+  team(teamID: String): Team
+}
+
+type Mutation {
+  createUser(userAccount: String, userPassword: String, userEmail: String): User
+  updateUser(userID: String, userName: String): User
+  createUserTodo(userID: String, todoContent: String): Todo
+
+  ## --------- Team ----------##
+
+  createTeam(
+    teamName: String!
+    teamDescription: String!
+    teamType: String!
+    creatorID: String!
+    memberAccount: [String]
+  ): Team
+
+  addMember(teamID: String, memberAccount: String): User
+  addManager(teamID: String, memberID: String): User
+
+  deleteMember(teamID: String, memberID: String): User
+  deleteManager(teamID: String, memberID: String): User
+  deleteTeam(teamID: String!, memberID: String!): Team
+
+  ##---------- Team Event, Reply (完成) ----------##
+
+  createTeamEvent(
+    eventTitle: String
+    eventDescription: String
+    eventStart: Float
+    eventEnd: Float
+    eventLocation: String
+    teamID: String
+    creatorID: String
+  ): String
+
+  replyTeamEvent(
+    eventReplyOption: String!
+    eventReplyContent: String
+    memberID: String!
+    eventID: String!
+  ): EventReply
+
+  updateTeamEvent(
+    eventTitle: String
+    eventDescription: String
+    eventStart: Float
+    eventEnd: Float
+    eventLocation: String
+    eventID: String
+  ): String
+
+  updateEventReply(
+    eventReplyOption: String
+    eventReplyContent: String
+    eventReplyID: String
+  ): EventReply
+
+  deleteEventReply(eventReplyID: String, eventID: String): Event
+  deleteEvent(eventID: String, teamID: String): Team
+
+  ##---------- Team Post (完成) ----------##
+
+  createPost(
+    postTitle: String
+    postContent: String
+    teamID: String
+    creatorID: String
+  ): Post
+
+  updatePost(postTitle: String, postContent: String, postID: String): Post
+
+  deletePost(postID: String, teamID: String): Team
+
+  ##---------- Team Vote, Option (完成) ----------##
+
+  createVote(
+    voteTitle: String!
+    voteDescription: String!
+    voteEnd: String!
+    voteLimit: Int
+    teamID: String!
+    creatorID: String!
+  ): Vote
+  createVoteOption(voteOptionName: String!, voteID: String!): VoteOption
+
+  updateVote(
+    voteTitle: String
+    voteDescription: String
+    voteEnd: String
+    voteLimit: Int
+    voteID: String
+  ): Vote
+  updateVoteOption(voteOptionName: String, voteOptionID: String): VoteOption
+
+  replyVote(voteOptionID: String, voterID: String): VoteOption
+
+  deleteVoteOption(voteOptionID: String, voteID: String): Vote
+  deleteVote(voteID: String, teamID: String): Team
+
+  ##---------- Team Contest, Detail ----------##
+
+  createContest(
+    teamID: String
+    contestDate: String
+    contestOpponent: String
+    contestIsWin: String
+    contestTitle: String
+    contestMySet: Int
+    contestOppoSet: Int
+  ): Contest
+  createSetDetail(
+    contestID: String
+    setNumber: Int
+    setScore: String
+    setMyPoint: Int
+    setOppoPoint: Int
+    setOppoErrServe: Int
+    setOppoErrAttack: Int
+    setOppoErrOther: Int
+    setNote: String
+  ): SetDetail
+  createDetailPlayer(
+    setID: String
+    playerID: String
+    detailPointServe: Int
+    detailPointAttack: Int
+    detailPointTip: Int
+    detailTimeAttack: Int
+    detailTimePass: Int
+    detailTimeNoPass: Int
+    detailErrPassS: Int
+    detailErrPassA: Int
+    detailErrPass1: Int
+    detailErrSet: Int
+    detailErrOther: Int
+    detailErrAttack: Int
+    detailErrServe: Int
+    detailComboServe: String
+  ): DetailPlayer
+
+  updateContest(
+    contestID: String!
+    contestDate: String
+    contestOpponent: String
+    contestIsWin: String
+    contestTitle: String
+    contestMySet: Int
+    contestOppoSet: Int
+  ): Contest
+  updateSetDetail(
+    setID: String
+    setNumber: Int
+    setScore: String
+    setMyPoint: Int
+    setOppoPoint: Int
+    setOppoErrServe: Int
+    setOppoErrAttack: Int
+    setOppoErrOther: Int
+    setNote: String
+  ): SetDetail
+  updateDetailPlayer(
+    detailID: String!
+    detailPlayer: String!
+    detailPointServe: Int
+    detailPointAttack: Int
+    detailPointTip: Int
+    detailTimeAttack: Int
+    detailTimePass: Int
+    detailTimeNoPass: Int
+    detailErrPassS: Int
+    detailErrPassA: Int
+    detailErrPass1: Int
+    detailErrSet: Int
+    detailErrOther: Int
+    detailErrAttack: Int
+    detailErrServe: Int
+    detailComboServe: String
+  ): DetailPlayer
+
+  deleteContest(contestID: String, teamID: String): Team
+  deleteSetDetail(setID: String, contestID: String): Contest
+  deleteDetailPlayer(detailID: String!, setID: String!): SetDetail
+
+  ##------------------------------##
+
+  updateUserNotification(
+    userID: String
+    time: Int
+    type: String
+    content: String
+  ): String
+
+  updateUserAchievement(userID: String, title: String, content: String): String
+
+  createUserEvent(
+    eventCreator: String
+    eventID: String
+    eventTitle: String
+    eventDescription: String
+    eventStart: Float
+    eventEnd: Float
+    eventLocation: String
+    eventPostTime: String
+  ): String
+
+  updateUserEvent(
+    eventID: String
+    eventTitle: String
+    eventDescription: String
+    eventStart: Float
+    eventEnd: Float
+    eventLocation: String
+  ): String
+
+  deleteUserEvent(eventID: String): String
+  deleteTeamEvent(eventID: String): String
+}
+
+type Subscription {
+  testSubscription: String
+
+  userEventCreate: DashboardEvent
+}
+
+##---------- Type ----------#
+
+type User {
+  userID: String
+  userAccount: String
+  userPassword: String
+  userEmail: String
+  userName: String
+  userBirthday: Float
+  userStatus: String
+  userProfile: String
+  allTeams: [Team]
+  manageTeams: [Team]
+  userTodo: [Todo]
+  # userEvent: [DashboardEvent]!
+  # userTodo: [Todo!]!
+  # userPlaySet: [UserPlaySet]!
+  # userAchievement: [Achievement]!
+}
+
+type Todo {
+  userID: String
+  todoID: String
+  todoDone: Boolean
+  todoDeleted: Boolean
+  todoContent: String
+}
+
+type NotificationTask {
+  taskID: String
+  taskTitle: String
+  taskTime: Float
+  taskType: String
+  taskContent: String
+}
+
+type DashboardEvent {
+  type: String
+  eventID: String!
+  eventTitle: String!
+  eventDescription: String
+  eventStart: Float!
+  eventEnd: Float!
+  eventLocation: String
+  eventPostTime: String
+}
+
+type UserPlaySet {
+  userPlaySetID: String!
+  playSetUser: User!
+  scoreDetail: [Int!]!
+}
+
+type userAchievement {
+  userID: String!
+  userAchievementID: String!
+  userAchievementTitle: String!
+  userAchievementContent: String
+}
+
+type Team {
+  teamID: String!
+  teamName: String!
+  teamDescription: String!
+  teamType: String!
+  teamCreateTime: String
+  teamMember: [User]
+  teamPost: [Post]
+  teamContest: [Contest]
+  teamVote: [Vote]
+  teamEvent: [Event]
+  teamManager: [User]
+  #teamGallery: [Gallery]
+  #teamGantt: [Gantt]
+  #creator: User
+}
+
+type Post {
+  postID: String
+  postTitle: String
+  postContent: String
+  postAuthor: User
+  postTime: String
+}
+
+type Contest {
+  contestID: String
+  contestTitle: String
+  contestDate: String
+  contestMyTeam: Team
+  contestOpponent: String
+  contestIsWin: String
+  contestMySet: Int
+  contestOppoSet: Int
+  contestSetDetail: [SetDetail]
+}
+
+type SetDetail {
+  setID: String
+  setNumber: Int
+  setScore: String
+  setMyPoint: Int
+  setOppoPoint: Int
+  setOppoErrServe: Int
+  setOppoErrAttack: Int
+  setOppoErrOther: Int
+  setNote: String
+  setPlayerDetail: [DetailPlayer]
+}
+
+type DetailPlayer {
+  detailID: String
+  detailPlayer: User
+  detailPointServe: Int
+  detailPointAttack: Int
+  detailPointTip: Int
+  detailTimeAttack: Int
+  detailTimePass: Int
+  detailTimeNoPass: Int
+  detailErrPassS: Int
+  detailErrPassA: Int
+  detailErrPass1: Int
+  detailErrSet: Int
+  detailErrOther: Int
+  detailErrAttack: Int
+  detailErrServe: Int
+  detailComboServe: String
+}
+
+type Vote {
+  voteID: String
+  voteTitle: String
+  voteDescription: String
+  voteEnd: String
+  voteLimit: Int
+  voteCreator: User
+  voteOption: [VoteOption]
+  voteCreateTime: String
+}
+
+type VoteOption {
+  voteOptionID: String
+  voteOptionName: String
+  votedUser: [User]
+}
+
+type Event {
+  type: String
+  teamID: String
+  eventID: String
+  eventTitle: String
+  eventDescription: String
+  eventStart: String
+  eventEnd: String
+  eventLocation: String
+  eventCreator: User
+  eventPostTime: String
+  eventReply: [EventReply]
+}
+
+type EventReply {
+  eventReplyID: String
+  eventReplyMemeber: User
+  eventReplyOption: EventReplyOption
+  eventReplyContent: String
+  eventReplyTime: String
+}
+
+enum EventReplyOption {
+  Yes
+  No
+  Unsure
+}
+
+# enum ContestWinOption { win  lose  tie}
+# type Gallery { teamID: String! galleryID: String! galleryTitle: String! original_url: [String!]! thumbnail_url: [String!]!}
+# type Gantt { teamID: String! ganttID: String! ganttTitle: String! ganttTaskID: [GanttTask]!}
+# type GanttTask { ganttTaskID: String dateStart: Int! dateEnd: Int! duration: Int! percComplete: Float! dependencies: String!}
+# input CreateGalleryInput { galleryTitle: String }
+#initGallery(teamID: String): [Gallery]
+#initGantt(teamID: String): [Gantt]
+#createGallery(teamID: String!, galleryTitle: String!): Gallery! # ok
+#createGantt(teamID: String!, ganttTitle: String!): Gantt! # ok
